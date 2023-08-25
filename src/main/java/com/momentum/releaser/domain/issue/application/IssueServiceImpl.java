@@ -715,20 +715,30 @@ public class IssueServiceImpl implements IssueService {
             // updateIssueId가 issueStatusList에 있는지 확인하는 코드
             IssueStatus issueStatusResult = orderIssue.getIssueStatusList().stream().filter(issueStatus -> issueStatus.getIssueId().equals(updateIssueId)).findFirst().get();
 
+            // 같은 lifeCycle내에서 순서 변경
             if (issueStatusResult != null && srcLifeCycle.equals(destLifeCycle)) {
+                // 같은 LifeCycle내에 있는 이슈 리스트
                 List<IssueStatus> issueList = orderIssue.getIssueStatusList().stream()
                         .filter(issueStatus -> issueStatus.getLifeCycle().equals(destLifeCycle))
                         .sorted(Comparator.comparingInt(IssueStatus::getIndex))
                         .collect(Collectors.toList());
 
+                // 변경할 순서인덱스가 0이상이고 이슈 리스트보다 작을 경우
                 if (index >= 0 && index < issueList.size()) {
-                    IssueStatus targetIssue = issueList.get(index);
-                    int newIndex = issueList.indexOf(targetIssue);
+                    // 변경당할 인덱스를 가진 이슈 정보
+                    IssueStatus targetIssue = issueList.stream().filter(sameIssue -> sameIssue.getIssueId().equals(issue.getIssueId())).findFirst().get();
+                    log.debug("issue : {}, index : {}", targetIssue.getIssueId(), targetIssue.getIndex());
+                    // 해당 Index를 가진 기존 이슈 정보
+                    IssueStatus originalIssue = issueList.get(index);
+                    log.debug("originalIssue : {}", originalIssue.getIssueId());
+                    Integer newIndex = targetIssue.getIndex();
+                    log.debug("newIdx : {}", newIndex);
 
                     // 두 이슈의 위치를 서로 바꿉니다
-                    IssueStatus originalIssue = issueList.get(newIndex);
-                    issueList.set(newIndex, targetIssue);
-                    issueList.set(index, originalIssue);
+//                    IssueStatus originalIssue = issueList.get(newIndex);
+                    log.debug("originalIssue : {}", originalIssue.getIssueId());
+                    issueList.set(index, targetIssue);
+                    issueList.set(newIndex, originalIssue);
 
                     // 인덱스를 업데이트합니다
                     for (int i = 0; i < issueList.size(); i++) {
