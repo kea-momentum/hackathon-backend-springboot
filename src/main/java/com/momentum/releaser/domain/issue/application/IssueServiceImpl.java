@@ -727,16 +727,11 @@ public class IssueServiceImpl implements IssueService {
                 if (index >= 0 && index < issueList.size()) {
                     // 변경당할 인덱스를 가진 이슈 정보
                     IssueStatus targetIssue = issueList.stream().filter(sameIssue -> sameIssue.getIssueId().equals(issue.getIssueId())).findFirst().get();
-                    log.debug("issue : {}, index : {}", targetIssue.getIssueId(), targetIssue.getIndex());
                     // 해당 Index를 가진 기존 이슈 정보
                     IssueStatus originalIssue = issueList.get(index);
-                    log.debug("originalIssue : {}", originalIssue.getIssueId());
                     Integer newIndex = targetIssue.getIndex();
-                    log.debug("newIdx : {}", newIndex);
 
                     // 두 이슈의 위치를 서로 바꿉니다
-//                    IssueStatus originalIssue = issueList.get(newIndex);
-                    log.debug("originalIssue : {}", originalIssue.getIssueId());
                     issueList.set(index, targetIssue);
                     issueList.set(newIndex, originalIssue);
 
