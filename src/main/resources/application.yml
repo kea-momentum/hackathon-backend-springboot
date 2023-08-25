@@ -1,34 +1,11 @@
 spring:
   profiles:
     group:
-      prod: prod, common
       dev: dev, common
       local: local, common
 
     # 활성 프로필 설정
     active: dev
-
----
-# prod
-spring:
-  config:
-    activate:
-      on-profile: prod
-
-  rabbitmq:
-    host: ${RABBITMQ_HOST}
-    port: ${RABBITMQ_PORT}
-    username: ${RABBITMQ_USERNAME}
-    password: ${RABBITMQ_PASSWORD}
-
-  redis:
-    host: ${REDIS_PROD_HOST}
-    port: ${REDIS_PROD_PORT}
-
-logging:
-  slack:
-    webhook-url-prod-error: ${SLACK_WEBHOOK_URL_PROD_ERROR}
-  config: classpath:logback-spring.xml
 
 ---
 # dev
@@ -61,8 +38,8 @@ spring:
       on-profile: local
 
   rabbitmq:
-    host: ${RABBITMQ_HOST}
-    port: ${RABBITMQ_PORT}
+    host: ${RABBITMQ_LOCAL_HOST}
+    port: ${RABBITMQ_LOCAL_PORT}
     username: ${RABBITMQ_USERNAME}
     password: ${RABBITMQ_PASSWORD}
 
@@ -119,25 +96,23 @@ spring:
           google:
             client-id: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID}
             client-secret: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET}
-            scope: email, profile
-            redirect-uri: "https://releaser.shop/login/oauth2/code/google"
+            scope: email,profile
           kakao:
             client-id: ${OAUTH2_KAKAO_CLIENT_ID}
             client-secret: ${OAUTH2_KAKAO_CLIENT_SECRET}
-            redirect-uri: "https://releaser.shop/login/oauth2/code/kakao"
-#            redirect-uri: "http://localhost:8080/login/oauth2/code/kakao"
+            redirect-uri: "{baseUrl}/oauth2/callback/{registrationId}"
             authorization-grant-type: authorization_code
             client-authentication-method: POST
-            client-name: kakao
+            client-name: Kakao
             scope:
               - profile_nickname
               - profile_image
               - account_email
         provider:
           kakao:
-            authorization-uri: "https://kauth.kakao.com/oauth/authorize"
-            token-uri: "https://kauth.kakao.com/oauth/token"
-            user-info-uri: "https://kapi.kakao.com/v2/user/me"
+            authorization-uri: ${OAUTH2_KAKAO_AUTHORIZATION_URI}
+            token-uri: ${OAUTH2_KAKAO_TOKEN_URI}
+            user-info-uri: ${OAUTH2_KAKAO_USER_INFO_URI}
             user-name-attribute: id
 
   mail:
@@ -186,7 +161,9 @@ stomp:
 
 app:
   oauth2:
+    # OAuth2 공급자로 성공적으로 인증 한 후 사용자에 대한 인증 토큰을 생성하고 토큰을
+    # 프론트 엔드 클라이언트가 /oauth2/authorize 요청에서 지정한 redirectUri 입니다.
+    # 쿠키는 모바일 클라이언트에서 잘 작동하지 않기 때문에 사용하지 않습니다
     authorizedRedirectUris:
-      - http://localhost:3000/api/auth/token
-      - http://localhost:8080/api/auth/token
-      - https://releaser.shop/api/auth/token
+      - http://localhost:3000/oauth2/redirect
+      - https://releaser.shop/oauth2/redirect
