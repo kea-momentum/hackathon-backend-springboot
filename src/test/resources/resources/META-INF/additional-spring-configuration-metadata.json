@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "aws.s3.logo-releaser",
+      "type": "java.lang.String",
+      "description": "Description for aws.s3.logo-releaser."
+  }
+] }

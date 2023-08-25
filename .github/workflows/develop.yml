@@ -1,0 +1,143 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Deploy
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches:
+      - develop
+
+env:
+  AWS_REGION: ap-northeast-2
+  S3_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
+  CODE_DEPLOY_APPLICATION_NAME: releaser-codedeploy-app
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: releaser-codedeploy-app-group
+
+permissions:
+  contents: read
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  deploy:
+    # The type of runner that the job will run on
+    name: Deploy
+    runs-on: ubuntu-22.04
+    environment: develop
+    
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      - name: Set Yaml
+        run: |
+          sed -i 's|\${DEV_DB_URL}|${{ secrets.DEV_DB_URL }}|g' ./src/main/resources/application.yml
+          sed -i 's|\${DEV_DB_USERNAME}|${{ secrets.DEV_DB_USERNAME }}|g' ./src/main/resources/application.yml
+          sed -i 's|\${DEV_DB_PASSWORD}|${{ secrets.DEV_DB_PASSWORD }}|g' ./src/main/resources/application.yml
+          sed -i 's|\${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID}|${{ secrets.SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID }}|g' ./src/main/resources/application.yml
+          sed -i 's|\${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET}|${{ secrets.SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET }}|g' ./src/main/resources/application.yml
+          sed -i 's|\${AWS_BUCKET_NAME}|${{ secrets.AWS_BUCKET_NAME }}|g' ./src/main/resources/application.yml
+          sed -i 's|\${AWS_ACCESS_KEY}|${{ secrets.AWS_ACCESS_KEY }}|g' ./src/main/resources/application.yml
+          sed -i 's|\${AWS_SECRET_KEY}|${{ secrets.AWS_SECRET_KEY }}|g' ./src/main/resources/application.yml
+          sed -i 's|\${JWT_SECRET_KEY}|${{ secrets.JWT_SECRET_KEY }}|g' ./src/main/resources/application.yml
+          sed -i 's|\${MAIL_USERNAME}|${{ secrets.MAIL_USERNAME }}|g' ./src/main/resources/application.yml
+          sed -i 's|\${MAIL_PASSWORD}|${{ secrets.MAIL_PASSWORD }}|g' ./src/main/resources/application.yml
+          sed -i 's|\${REDIS_HOST}|${{ secrets.REDIS_HOST }}|g' ./src/main/resources/application.yml
+          sed -i 's|\${REDIS_PORT}|${{ secrets.REDIS_PORT }}|g' ./src/main/resources/application.yml
+          sed -i 's|\${URL_BANNER_PROJECT}|${{ secrets.URL_BANNER_PROJECT }}|g' ./src/main/resources/application.yml
+          sed -i 's|\${URL_LOGO_TEAM}|${{ secrets.URL_LOGO_TEAM }}|g' ./src/main/resources/application.yml
+          sed -i 's|\${SLACK_WEBHOOK_URL_PROD_ERROR}|${{ secrets.SLACK_WEBHOOK_URL_PROD_ERROR }}|g' ./src/main/resources/application.yml
+          sed -i 's|\${SLACK_WEBHOOK_URL_DEV_WARN}|${{ secrets.SLACK_WEBHOOK_URL_DEV_WARN }}|g' ./src/main/resources/application.yml
+          sed -i 's|\${SLACK_WEBHOOK_URL_DEV_ERROR}|${{ secrets.SLACK_WEBHOOK_URL_DEV_ERROR }}|g' ./src/main/resources/application.yml
+          sed -i 's|\${REDIS_LOCAL_HOST}|${{ secrets.REDIS_LOCAL_HOST }}|g' ./src/main/resources/application.yml
+          sed -i 's|\${REDIS_LOCAL_PORT}|${{secrets.REDIS_LOCAL_PORT}}|g' ./src/main/resources/application.yml
+          sed -i 's|\${RABBITMQ_HOST}|${{secrets.RABBITMQ_HOST}}|g' ./src/main/resources/application.yml
+          sed -i 's|\${RABBITMQ_LOCAL_HOST}|${{secrets.RABBITMQ_LOCAL_HOST}}|g' ./src/main/resources/application.yml
+          sed -i 's|\${RABBITMQ_LOCAL_PORT}|${{secrets.RABBITMQ_LOCAL_PORT}}|g' ./src/main/resources/application.yml
+          sed -i 's|\${RABBITMQ_PASSWORD}|${{secrets.RABBITMQ_PASSWORD}}|g' ./src/main/resources/application.yml
+          sed -i 's|\${RABBITMQ_PORT}|${{secrets.RABBITMQ_PORT}}|g' ./src/main/resources/application.yml
+          sed -i 's|\${RABBITMQ_USER_EXCHANGE}|${{secrets.RABBITMQ_USER_EXCHANGE}}|g' ./src/main/resources/application.yml
+          sed -i 's|\${RABBITMQ_USER_QUEUE}|${{secrets.RABBITMQ_USER_QUEUE}}|g' ./src/main/resources/application.yml
+          sed -i 's|\${RABBITMQ_USER_ROUTINGKEY}|${{secrets.RABBITMQ_USER_ROUTINGKEY}}|g' ./src/main/resources/application.yml
+          sed -i 's|\${RABBITMQ_USERNAME}|${{secrets.RABBITMQ_USERNAME}}|g' ./src/main/resources/application.yml
+          sed -i 's|\${REDIS_PROD_HOST}|${{secrets.REDIS_PROD_HOST}}|g' ./src/main/resources/application.yml
+          sed -i 's|\${REDIS_PROD_PORT}|${{secrets.REDIS_PROD_PORT}}|g' ./src/main/resources/application.yml
+          sed -i 's|\${STOMP_RELAY_PORT}|${{secrets.STOMP_RELAY_PORT}}|g' ./src/main/resources/application.yml
+          sed -i 's|\${OAUTH2_KAKAO_CLIENT_ID}|${{secrets.OAUTH2_KAKAO_CLIENT_ID}}|g' ./src/main/resources/application.yml
+          sed -i 's|\${OAUTH2_KAKAO_CLIENT_SECRET}|${{secrets.OAUTH2_KAKAO_CLIENT_SECRET}}|g' ./src/main/resources/application.yml
+          
+          
+
+#      - name: Set Yaml
+#        uses: microsoft/variable-substitution@v1
+#        with:
+#          files: ./src/main/resources/application.yml
+#        env:
+#          spring.datasource.url: ${{ secrets.DEV_DB_URL }}
+#          spring.datasource.username: ${{ secrets.DEV_DB_USERNAME }}
+#          spring.datasource.password: ${{ secrets.DEV_DB_PASSWORD }}
+#          spring.security.oauth2.client.registration.google.client-id: ${{ secrets.SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID }}
+#          spring.security.oauth2.client.registration.google.client-secret: ${{ secrets.SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET }}
+#          cloud.aws.s3.bucket: ${{ secrets.AWS_BUCKET_NAME }}
+#          cloud.aws.credentials.access-key: ${{ secrets.AWS_ACCESS_KEY }}
+#          cloud.aws.credentials.secret-key: ${{ secrets.AWS_SECRET_KEY }}
+#          jwt.secret.key: ${{ secrets.JWT_SECRET_KEY }}
+#          spring.mail.username: ${{ secrets.MAIL_USERNAME }}
+#          spring.mail.password: ${{ secrets.MAIL_PASSWORD }}
+#          spring.redis.host: ${{ secrets.REDIS_HOST }}
+#          spring.redis.port: ${{ secrets.REDIS_PORT }}
+#          url.image.banner-project: ${{ secrets.URL_BANNER_PROJECT }}
+#          url.image.logo-team: ${{ secrets.URL_LOGO_TEAM }}
+#          logging.slack.webhook-url-prod-error: ${{ secrets.SLACK_WEBHOOK_URL_PROD_ERROR }}
+#          logging.slack.webhook-url-dev-warn: ${{ secrets.SLACK_WEBHOOK_URL_DEV_WARN }}
+#          logging.slack.webhook-url-dev-error: ${{ secrets.SLACK_WEBHOOK_URL_DEV_ERROR }}
+
+      # Gradle 권한 설정
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      # Gradle build
+      - name: Build with Gradle
+        run: ./gradlew clean build -x test
+
+      - name: Check if a.yml exists
+        run: |
+          if [ -f ./src/main/resources/application.yml ]; then
+            echo "a.yml exists"
+          else
+            echo "a.yml does not exist"
+          fi
+
+      # AWS 인증
+      - name: AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      # 빌드 결과물을 S3에 업로드
+      - name: Upload to AWS S3
+        run: |
+          aws deploy push \
+            --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
+            --ignore-hidden-files \
+            --s3-location s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip \
+            --source .
+
+      # S3에 있는 파일을 대상으로 CodeDeploy 실행
+      - name: Deploy to AWS EC2 from S3
+        run: |
+          aws deploy create-deployment \
+            --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
+            --deployment-config-name CodeDeployDefault.AllAtOnce \
+            --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
+            --s3-location bucket=$S3_BUCKET_NAME,key=$GITHUB_SHA.zip,bundleType=zip

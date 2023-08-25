@@ -1,0 +1,44 @@
+{
+  "properties": [
+    {
+      "name": "aws.s3.logo-releaser",
+      "type": "java.lang.String",
+      "description": "Description for aws.s3.logo-releaser."
+    },
+    {
+      "name": "logging.slack.webhook-url-prod-error",
+      "type": "java.lang.String",
+      "description": "Description for logging.slack.webhook-url-prod-error."
+    },
+    {
+      "name": "logging.slack.webhook-url-dev-warn",
+      "type": "java.lang.String",
+      "description": "Description for logging.slack.webhook-url-dev-warn."
+    },
+    {
+      "name": "logging.slack.webhook-url-dev-error",
+      "type": "java.lang.String",
+      "description": "Description for logging.slack.webhook-url-dev-error."
+    },
+    {
+      "name": "rabbitmq.user.queue.name",
+      "type": "java.lang.String",
+      "description": "Description for rabbitmq.user.queue.name."
+    },
+    {
+      "name": "rabbitmq.user.exchange.name",
+      "type": "java.lang.String",
+      "description": "Description for rabbitmq.user.exchange.name."
+    },
+    {
+      "name": "rabbitmq.user.routing.key",
+      "type": "java.lang.String",
+      "description": "Description for rabbitmq.user.routing.key."
+    },
+    {
+      "name": "stomp.relay.port",
+      "type": "java.lang.String",
+      "description": "Description for stomp.relay.port."
+    }
+  ]
+}

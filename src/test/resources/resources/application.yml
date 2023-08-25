@@ -1,0 +1,125 @@
+spring:
+  profiles:
+    group:
+      prod: prod, common
+      dev: dev, common
+      local: local, common
+
+    # 활성 프로필 설정
+    active: dev
+
+---
+# prod
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+logging:
+  slack:
+    webhook-url-prod-error: ${SLACK_WEBHOOK_URL_PROD_ERROR}
+
+---
+# dev
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+logging:
+  slack:
+    webhook-url-dev-warn: ${SLACK_WEBHOOK_URL_DEV_WARN}
+    webhook-url-dev-error: ${SLACK_WEBHOOK_URL_DEV_ERROR}
+
+---
+# local
+spring:
+  config:
+    activate:
+      on-profile: local
+
+---
+# common
+server:
+  port: 8080
+
+spring:
+  config:
+    activate:
+      on-profile: common
+
+  thymeleaf:
+    prefix: classpath:templates/
+    check-template-location: true
+    suffix: .html
+    mode: HTML5
+    cache: false
+
+  datasource:
+    url: ${DEV_DB_URL}
+    username: ${DEV_DB_USERNAME}
+    password: ${DEV_DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        highlight_sql: true
+        use_sql_comments: true
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID}
+            client-secret: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET}
+            scope: email,profile
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
+  redis:
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
+
+logging.level:
+  org.hibernate.SQL: debug
+
+jwt:
+  secret:
+    key: ${JWT_SECRET_KEY}
+
+cloud:
+  aws:
+    s3:
+      bucket: ${AWS_BUCKET_NAME}
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
+
+url:
+  image:
+    banner-project: ${URL_BANNER_PROJECT}
+    logo-team: ${URL_LOGO_TEAM}
