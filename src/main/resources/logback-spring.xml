@@ -5,7 +5,7 @@
 
     <!-- 환경 변수 -->
     <property name="CONSOLE_LOG_PATTERN"
-              value="%d{yyyy-MM-dd HH:mm:ss.SSS, ${logback.timezone:-Asia/Seoul}} [%thread] %clr(%5level) %cyan(%logger) - %msg%n"/>
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS, ${logback.timezone:-Asia/Seoul}} [%thread] %clr(%5level) %cyan(%logger) [%X{sessionId}][%X{remoteIp}] - %msg%n"/>
     <property name="FILE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS, ${logback.timezone:-Asia/Seoul}} [%thread] %5level %logger - %msg%n"/>
     <property name="SLACK_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS, ${logback.timezone:-Asia/Seoul}} [%thread] %5level %logger %n %n %msg %n"/>
     <springProperty name="SLACK_WEBHOOK_URL_DEV_WARN" source="logging.slack.webhook-url-dev-warn"/>
@@ -37,7 +37,9 @@
                         "log.level": "%-5level",
                         "message": "%message",
                         "process.thread.name": "%t",
-                        "log.logger": "%C{2}"
+                        "log.logger": "%C{2}",
+                        "sessionId": "%X{sessionId}",
+                        "remoteIP": "%X{remoteIp}"
                         }
                     </pattern>
                 </pattern>

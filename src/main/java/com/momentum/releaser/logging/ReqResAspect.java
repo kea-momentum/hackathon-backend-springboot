@@ -5,21 +5,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.momentum.releaser.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.*;
+import org.slf4j.MDC;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.RequestContextListener;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.net.InetAddress;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -41,12 +39,12 @@ import static com.momentum.releaser.global.config.BaseResponseStatus.SERVER_ERRO
 public class ReqResAspect {
     private final ObjectMapper objectMapper;
 
-    @Bean
-    public RequestContextListener requestContextListener() {
-        return new RequestContextListener();
-    }
+//    @Bean
+//    public RequestContextListener requestContextListener() {
+//        return new RequestContextListener();
+//    }
 
-    //    @Before("execution(* com.momentum.releaser..*.*(..))")
+//    @Before("execution(* com.momentum.releaser..*.*(..))")
     @Pointcut("within(com.momentum.releaser..*)")
     void restApiPointCut() {
     }
@@ -63,9 +61,18 @@ public class ReqResAspect {
      * @return
      * @throws Throwable
      */
-    @Around("restApiPointCut() && springBeanPointcut()")
+//    @Around("restApiPointCut() && springBeanPointcut()")
+    @Around("bean(*Controller)")
     Object reqResLogging(ProceedingJoinPoint joinPoint) throws Throwable {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+
+        HttpSession session = request.getSession();
+        String sessionId = session.getId();
+        String remoteIp = request.getRemoteAddr();
+
+        // MDC에 세션 아이디와 IP 주소 설정
+        MDC.put("sessionId", sessionId);
+        MDC.put("remoteIp", remoteIp);
 
         // fields
         String traceId = (String) request.getAttribute("traceId");
@@ -106,6 +113,7 @@ public class ReqResAspect {
 
             // 로그 출력
             log.info(objectMapper.writeValueAsString(logging));
+            log.info("Session ID: {}, Remote IP: {}, Log: {}", sessionId, remoteIp, objectMapper.writeValueAsString(logging));
             return result;
 
         } catch (Exception e) {
@@ -142,4 +150,34 @@ public class ReqResAspect {
 
         return jsonObject;
     }
+
+//    @Around("bean(*Controller)")
+//    public Object controllerAroundLogging(ProceedingJoinPoint pjp) throws Throwable {
+//        String timeStamp = new SimpleDateFormat(TIMESTAMP_FORMAT).format(new Timestamp(currentTimeMillis()));
+//        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+//
+//        this.clientIp = request.getRemoteAddr();
+//        this.clientUrl = request.getRequestURL().toString();
+//
+//        String callFunction = pjp.getSignature().getDeclaringTypeName() + "." + pjp.getSignature().getName();
+//
+//        StopWatch stopWatch = new StopWatch();
+//        stopWatch.start();
+//
+//        Object result = pjp.proceed();
+//
+//        stopWatch.stop();
+//
+//        LogELK logelk = LogELK.builder()
+//                .timestamp(timeStamp)
+//                .clientIp(clientIp)
+//                .clientUrl(clientUrl)
+//                .callFunction(callFunction)
+//                .parameter(mapper.writeValueAsString(request.getParameterMap()))
+//                .responseTime(stopWatch.getTotalTimeSeconds()).build();
+//
+//        log.info("{}", mapper.writeValueAsString(logelk));
+//        return result;
+//    }
+
 }
