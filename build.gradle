@@ -113,6 +113,7 @@ dependencies {
     implementation 'org.apache.tomcat.embed:tomcat-embed-core:9.0.73'
     implementation 'org.springframework.boot:spring-boot-starter-aop:2.7.5'
     implementation 'org.springframework.boot:spring-boot-starter-tomcat:2.7.12'
+    implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '6.3'
 }
 
 //tasks.named('compileJava') {
