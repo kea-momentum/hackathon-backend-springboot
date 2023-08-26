@@ -37,7 +37,12 @@
                         "log.level": "%-5level",
                         "message": "%message",
                         "process.thread.name": "%t",
-                        "log.logger": "%C{2}"
+                        "log.logger": "%C{2}",
+                        "sessionId": "%X{sessionId}",
+                        "clientIp": "%X{clientIp}",
+                        "serverIp": "%X{serverIp}",
+                        "methodName": "%X{methodName}",
+                        "executionTime": "%X{executionTime}"
                         }
                     </pattern>
                 </pattern>

@@ -209,4 +209,19 @@ public class ReqResAspect {
 //        return result;
 //    }
 
+
+    @Around("bean(*Controller)")
+    public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
+        long startTime = System.currentTimeMillis();
+        Object proceed = joinPoint.proceed();
+        long endTime = System.currentTimeMillis();
+
+        long executionTime = endTime - startTime;
+
+        MDC.put("executionTime", String.valueOf(executionTime));
+
+        log.info("{} executed in {} ms", joinPoint.getSignature(), executionTime);
+
+        return proceed;
+    }
 }
