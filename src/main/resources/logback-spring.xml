@@ -4,10 +4,9 @@
     <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
 
     <!-- 환경 변수 -->
-    <property name="CONSOLE_LOG_PATTERN"
-              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %clr(%5level) %cyan(%logger) - %msg%n"/>
-    <property name="FILE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %5level %logger - %msg%n"/>
-    <property name="SLACK_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %5level %logger %n %n %msg %n"/>
+    <property name="CONSOLE_LOG_PATTERN" value="%d{HH:mm:ss.SSS, ${logback.timezone:-Asia/Seoul}} [%thread] %clr(%5level) %cyan(%logger) - %msg%n"/>
+    <property name="FILE_LOG_PATTERN" value="%d{HH:mm:ss.SSS, ${logback.timezone:-Asia/Seoul}} [%thread] %5level %logger - %msg%n"/>
+    <property name="SLACK_LOG_PATTERN" value="%d{HH:mm:ss.SSS, ${logback.timezone:-Asia/Seoul}} [%thread] %5level %logger %n %n %msg %n"/>
     <springProperty name="SLACK_WEBHOOK_URL_DEV_WARN" source="logging.slack.webhook-url-dev-warn"/>
     <springProperty name="SLACK_WEBHOOK_URL_DEV_ERROR" source="logging.slack.webhook-url-dev-error"/>
     <springProperty name="SLACK_WEBHOOK_URL_PROD_ERROR" source="logging.slack.webhook-url-prod-error"/>
@@ -184,6 +183,7 @@
         <logger name="com.momentum.releaser" level="DEBUG"/>
         <root level="INFO">
             <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="INFO"/>
         </root>
     </springProfile>
 

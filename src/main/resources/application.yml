@@ -59,6 +59,10 @@ server:
   port: 8080
 
 spring:
+  aop:
+    auto: true
+    proxy-target-class: true
+
   config:
     activate:
       on-profile: common

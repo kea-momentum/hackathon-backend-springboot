@@ -38,6 +38,7 @@ public class GlobalControllerAdvice {
      */
     @ExceptionHandler(value = BaseException.class)
     protected BaseResponse<BaseResponseStatus> handleBaseException(BaseException e) {
+        log.error(e.toString());
         return new BaseResponse<>(e.getStatus());
     }
 
@@ -48,11 +49,14 @@ public class GlobalControllerAdvice {
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = Exception.class)
     protected String handleException(Exception e) {
+        log.error(e.toString());
         return e.getMessage();
     }
 
     @ExceptionHandler({ CustomException.class })
     protected BaseResponse handleCustomException(CustomException e) {
+        log.error(e.toString());
+
         if (e.getReleaseId() != null) {
             Map<String, Long> error = new HashMap<>();
             error.put("releaseId", e.getReleaseId());
@@ -72,7 +76,7 @@ public class GlobalControllerAdvice {
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public BaseResponse<Map<String, String>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        log.debug(e.getMessage());
+        log.warn(e.toString());
 
         Map<String, String> errors = new HashMap<>();
 
@@ -87,7 +91,7 @@ public class GlobalControllerAdvice {
      */
     @ExceptionHandler(BindException.class)
     public BaseResponse<Map<String, String>> handleBindException(BindException e) {
-        log.debug(e.getMessage());
+        log.warn(e.toString());
 
         Map<String, String> errors = new HashMap<>();
 
@@ -119,7 +123,7 @@ public class GlobalControllerAdvice {
      */
     @ExceptionHandler(ConstraintViolationException.class)
     public BaseResponse<Map<String, String>> handleConstraintViolationException(ConstraintViolationException e) {
-        log.debug(e.getMessage());
+        log.warn(e.toString());
 
         Map<String, String> errors = new HashMap<>();
 
@@ -138,7 +142,7 @@ public class GlobalControllerAdvice {
      */
     @ExceptionHandler(RuntimeException.class)
     public BaseResponse<String> handleRuntimeException(RuntimeException e) {
-        log.debug(e.getMessage());
+        log.error(e.toString());
         return new BaseResponse<>(BaseResponseStatus.SERVER_ERROR);
     }
 
@@ -147,6 +151,7 @@ public class GlobalControllerAdvice {
      */
     @ExceptionHandler(SQLException.class)
     public BaseResponse<String> handleSQLException(SQLException e) {
+        log.error(e.toString());
         return new BaseResponse<>(BaseResponseStatus.DATABASE_ERROR);
     }
 
@@ -155,7 +160,7 @@ public class GlobalControllerAdvice {
      */
     @ExceptionHandler(IOException.class)
     public BaseResponse<String> handleIOException(IOException e) {
-        log.debug(e.getMessage());
+        log.error(e.toString());
         return new BaseResponse<>(BaseResponseStatus.IO_ERROR);
     }
 }

@@ -87,7 +87,10 @@ public class IssueServiceImpl implements IssueService {
         notifyIssueAll(project, newIssue);
 
         // 이슈 담당자 할당 시 알림
-        notifyIssueOne(userEmail, project, newIssue, null);
+        if (newIssue.getMember() != null) {
+            // 이슈 담당자가 할당되었을 때만 알림을 보낸다.
+            notifyIssueOne(newIssue.getMember().getUser().getEmail(), project, newIssue, null);
+        }
 
         return IssueIdResponseDTO.builder()
                 .issueId(newIssue.getIssueId())
@@ -127,7 +130,10 @@ public class IssueServiceImpl implements IssueService {
         Issue updatedIssue = issueRepository.save(issue);
 
         // 이슈 담당자 할당 변경 시 알림
-        notifyIssueOne(email, issue.getProject(), updatedIssue, previousMember);
+        if (updatedIssue.getMember() != null) {
+            // 이슈 담당자가 할당된 경우에만 알림을 전송한다.
+            notifyIssueOne(updatedIssue.getMember().getUser().getEmail(), issue.getProject(), updatedIssue, previousMember);
+        }
 
         return IssueMapper.INSTANCE.toIssueModifyResponseDTO(projectMember);
     }

@@ -4,10 +4,12 @@ import com.momentum.releaser.global.config.AppProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+@EnableAspectJAutoProxy
 @EnableAsync
 @EnableScheduling
 @EnableJpaAuditing // BaseTime 클래스처럼 JPA auditing 기능 활성화
