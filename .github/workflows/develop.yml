@@ -11,8 +11,8 @@ on:
 env:
   AWS_REGION: ap-northeast-2
   S3_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
-  CODE_DEPLOY_APPLICATION_NAME: releaser-codedeploy-app
-  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: releaser-codedeploy-app-group
+  CODE_DEPLOY_APPLICATION_NAME: gcu_hac_007
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: gcu_hac_007
 
 permissions:
   contents: read
