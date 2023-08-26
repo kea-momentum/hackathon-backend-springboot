@@ -725,6 +725,7 @@ public class IssueServiceImpl implements IssueService {
 
                 // 변경할 순서인덱스가 0이상이고 이슈 리스트보다 작을 경우
                 if (index >= 0 && index < issueList.size()) {
+
                     // 변경당할 인덱스를 가진 이슈 정보
                     IssueStatus targetIssue = issueList.stream().filter(sameIssue -> sameIssue.getIssueId().equals(issue.getIssueId())).findFirst().get();
                     // 해당 Index를 가진 기존 이슈 정보
