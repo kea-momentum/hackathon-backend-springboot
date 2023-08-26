@@ -6,13 +6,13 @@ on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
     branches:
-      - develop
+      - main
 
 env:
   AWS_REGION: ap-northeast-2
   S3_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
-  CODE_DEPLOY_APPLICATION_NAME: releaser-codedeploy-app
-  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: releaser-codedeploy-app-group
+  CODE_DEPLOY_APPLICATION_NAME: gcu_hac_007
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: gcu_hac_007
 
 permissions:
   contents: read
@@ -121,8 +121,8 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-region: ${{ env.AWS_REGION }}
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_IAM_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_IAM_SECRET_KEY }}
 
       # 빌드 결과물을 S3에 업로드
       - name: Upload to AWS S3

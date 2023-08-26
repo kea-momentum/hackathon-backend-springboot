@@ -79,6 +79,7 @@ public class AuthServiceImpl implements AuthService {
     public UserInfoResponseDTO addSignUpUser(UserInfoReqestDTO userInfoReq) {
         // Email 중복 체크
         validateUniqueEmail(userInfoReq.getEmail());
+        log.info("회원가입 중복 체크");
         // 사용자 정보 저장
         User user = createUser(userInfoReq);
         // 패스워드 암호화 후 저장
@@ -99,6 +100,7 @@ public class AuthServiceImpl implements AuthService {
     public TokenDto saveLoginUser(UserLoginReqestDTO userLoginReq) {
         // 로그인한 유저 정보 저장
         Authentication authentication = authenticateUser(userLoginReq.getEmail(), userLoginReq.getPassword());
+        log.info("유저 정보 저장");
         // Token 생성
         TokenDto tokenDto = jwtTokenProvider.generateToken(authentication);
         // Refresh Token 관리
