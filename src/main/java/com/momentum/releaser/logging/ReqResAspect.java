@@ -66,21 +66,26 @@ public class ReqResAspect {
     Object reqResLogging(ProceedingJoinPoint joinPoint) throws Throwable {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 
+        // fields used
         HttpSession session = request.getSession();
         String sessionId = session.getId();
         String remoteIp = request.getRemoteAddr();
+        String serverIp = InetAddress.getLocalHost().getHostAddress();
+        String methodName = joinPoint.getSignature().getName(); // 해당 메서드의 이름
+        String uri = request.getContextPath();
 
         // MDC에 세션 아이디와 IP 주소 설정
         MDC.put("sessionId", sessionId);
-        MDC.put("remoteIp", remoteIp);
+        MDC.put("clientIp", remoteIp);
+        MDC.put("serverIp", serverIp);
+        MDC.put("methodName", methodName);
+//        MDC.put("pageId", getPageId(uri));
 
-        // fields
+        // fields not used
         String traceId = (String) request.getAttribute("traceId");
         String className = joinPoint.getSignature().getDeclaringTypeName(); // 해당 메서드가 선언된 클래스 이름
-        String methodName = joinPoint.getSignature().getName(); // 해당 메서드의 이름
-        Map<String, String> params = getParams(request); // Query string 파라미터를 맵의 형태로 변환하는 메서드
         String deviceType = request.getHeader("x-custom-device-type");
-        String serverIp = InetAddress.getLocalHost().getHostAddress();
+        Map<String, String> params = getParams(request); // Query string 파라미터를 맵의 형태로 변환하는 메서드
 
         ReqResLogging reqResLogging = ReqResLogging.builder()
                 .traceId(traceId)
@@ -112,8 +117,8 @@ public class ReqResAspect {
             }
 
             // 로그 출력
-            log.info(objectMapper.writeValueAsString(logging));
-            log.info("Session ID: {}, Remote IP: {}, Log: {}", sessionId, remoteIp, objectMapper.writeValueAsString(logging));
+//            log.info(objectMapper.writeValueAsString(logging));
+//            log.info("Session ID: {}, Remote IP: {}, Log: {}", sessionId, remoteIp, objectMapper.writeValueAsString(logging));
             return result;
 
         } catch (Exception e) {
@@ -137,6 +142,30 @@ public class ReqResAspect {
 //            throw e;
         }
     }
+
+//    private int getPageId(String uri) {
+//        // /api/{domain}/{resources...}
+//        String domain = uri.split("/")[1];
+//
+//        switch (domain) {
+//            case "users":
+//                break;
+//            case "auth":
+//                break;
+//            case "projects":
+//                break;
+//            case "members":
+//                break;
+//            case "releases":
+//                break;
+//            case "issues":
+//                break;
+//            case "notifications":
+//                break;
+//            default:
+//                break;
+//        }
+//    }
 
     private Map<String, String> getParams(HttpServletRequest request) {
         Map<String, String> jsonObject = new HashMap<>();

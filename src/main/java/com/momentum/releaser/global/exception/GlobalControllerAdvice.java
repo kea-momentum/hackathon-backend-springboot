@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.ConstraintViolationException;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -143,6 +144,7 @@ public class GlobalControllerAdvice {
     @ExceptionHandler(RuntimeException.class)
     public BaseResponse<String> handleRuntimeException(RuntimeException e) {
         log.error(e.toString());
+        log.error(Arrays.toString(e.getStackTrace()));
         return new BaseResponse<>(BaseResponseStatus.SERVER_ERROR);
     }
 
